@@ -5,8 +5,8 @@ const ctx = $canvas.getContext("2d");
 // 패들 사이즈 설정하기
 const paddleSize = {
   width: 10,
-  height: 100
-}
+  height: 100,
+};
 
 // 패들 만드는 함수 (파라미터로 필요한건 x, y)
 function createPaddle(x, y) {
@@ -15,13 +15,21 @@ function createPaddle(x, y) {
     y: y,
     width: paddleSize.width,
     height: paddleSize.height,
-    dy: 5 // 움직이는 속도 (y축)
+    dy: 5, // 움직이는 속도 (y축)
+    moveUp: false,
+    moveDown: false,
   };
 }
 
 // 패들 만들기(위치만 넣어주면 됨)
-const playerPaddle = createPaddle(0, $canvas.height / 2 - paddleSize.height / 2);
-const aiPaddle = createPaddle($canvas.width - paddleSize.width, $canvas.height / 2 - paddleSize.height / 2);
+const playerPaddle = createPaddle(
+  0,
+  $canvas.height / 2 - paddleSize.height / 2
+);
+const aiPaddle = createPaddle(
+  $canvas.width - paddleSize.width,
+  $canvas.height / 2 - paddleSize.height / 2
+);
 
 // 패들 그리기 함수
 function drawPaddle(paddle) {
@@ -29,13 +37,43 @@ function drawPaddle(paddle) {
   ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 }
 
+// 키 입력 처리
+document.addEventListener("keydown", function (event) {
+  if (event.key === "ArrowUp") {
+    playerPaddle.moveUp = true;
+  }
+  if (event.key === "ArrowDown") {
+    playerPaddle.moveDown = true;
+  }
+});
+
+document.addEventListener("keyup", function (event) {
+  if (event.key === "ArrowUp") {
+    playerPaddle.moveUp = false;
+  }
+  if (event.key === "ArrowDown") {
+    playerPaddle.moveDown = false;
+  }
+});
+
+// 패들 움직이기 함수
+function movePaddle(paddle) {
+  if (paddle.moveUp && paddle.y > 0) {
+    paddle.y -= paddle.dy;
+  }
+  if (paddle.moveDown && paddle.y + paddle.height < $canvas.height) {
+    paddle.y += paddle.dy;
+  }
+}
+
 // 그리기 함수
 function draw() {
   ctx.clearRect(0, 0, $canvas.width, $canvas.height); // 캔버스 지우기(계속 그려야 되니까)
   drawPaddle(playerPaddle);
   drawPaddle(aiPaddle);
+
+  movePaddle(playerPaddle);
 }
 
 // 그리기 (60 FPS)
 setInterval(draw, 1000 / 60);
-
