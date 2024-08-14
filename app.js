@@ -20,7 +20,8 @@ function createPaddle(x, y) {
 }
 
 // 패들 만들기(위치만 넣어주면 됨)
-const playerPaddle = createPaddle(0, $canvas.height / 2 - paddleSize.height / 2)
+const playerPaddle = createPaddle(0, $canvas.height / 2 - paddleSize.height / 2);
+const aiPaddle = createPaddle($canvas.width - paddleSize.width, $canvas.height / 2 - paddleSize.height / 2);
 
 // 패들 그리기 함수
 function drawPaddle(paddle) {
@@ -32,6 +33,7 @@ function drawPaddle(paddle) {
 function draw() {
   ctx.clearRect(0, 0, $canvas.width, $canvas.height); // 캔버스 지우기(계속 그려야 되니까)
   drawPaddle(playerPaddle);
+  drawPaddle(aiPaddle);
 }
 
 // 그리기 (60 FPS)
