@@ -107,16 +107,13 @@ function moveBall() {
   ball.x += ball.dx;
   ball.y += ball.dy;
 
-  // 벽과 충돌했을 때의 처리
+  // 벽과 충돌했을 때의 움직임
   if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvasHeight) {
     ball.dy = -ball.dy;
   }
 
-  // 패들과 충돌 했을 때의 처리
-  if (isCollision(playerPaddle, ball)) {
-    ball.dx = -ball.dx;
-  }
-  if (isCollision(aiPaddle, ball)) {
+  // 패들과 충돌 했을 때의 움직임
+  if (isCollision(playerPaddle, ball) || isCollision(aiPaddle, ball)) {
     ball.dx = -ball.dx;
   }
 
