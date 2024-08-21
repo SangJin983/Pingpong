@@ -1,45 +1,52 @@
-// 키 버튼 입력 처리
-function handleKeyPress(event, keyPressed) {
-  if (event.key === "ArrowUp") playerPaddle.moveUp = keyPressed;
-  if (event.key === "ArrowDown") playerPaddle.moveDown = keyPressed;
-}
+class Game {
+  #lastCollisionTarget = null;
 
-// 키 입력 이벤트리스너 통합(누를 때 true, 뗄 때 false)
-document.addEventListener("keydown", (event) => handleKeyPress(event, true));
-document.addEventListener("keyup", (event) => handleKeyPress(event, false));
+  #checkCollision(paddle, ball) {
+    const isCollision =
+      paddle.name !== this.#lastCollisionTarget &&
+      ball.x - ball.radius < paddle.x + paddle.width &&
+      ball.x + ball.radius > paddle.x &&
+      ball.y + ball.radius > paddle.y &&
+      ball.y - ball.radius < paddle.y + paddle.height;
 
-let lastCollisionTarget = null;
+    if (isCollision) {
+      this.#lastCollisionTarget = paddle.name;
+    }
 
-// 공과 패들 충돌 확인하는 함수 (ball.js보다 위에 있는 상위 로직)
-function checkCollision(paddle, ball) {
-  const isCollision =
-    paddle.name !== lastCollisionTarget &&
-    ball.x - ball.radius < paddle.x + paddle.width &&
-    ball.x + ball.radius > paddle.x &&
-    ball.y + ball.radius > paddle.y &&
-    ball.y - ball.radius < paddle.y + paddle.height;
-
-  if (isCollision) {
-    lastCollisionTarget = paddle.name;
+    return isCollision;
   }
 
-  return isCollision;
+  #handleKeyPress(event, keyPressed) {
+    if (event.key === "ArrowUp") playerPaddle.moveUp = keyPressed;
+    if (event.key === "ArrowDown") playerPaddle.moveDown = keyPressed;
+  }
+
+  addKeyEventListener() {
+    document.addEventListener("keydown", (event) =>
+      this.#handleKeyPress(event, true)
+    );
+    document.addEventListener("keyup", (event) =>
+      this.#handleKeyPress(event, false)
+    );
+  }
+
+  gameLoop() {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight); // 캔버스 지우기(계속 그려야 되니까)
+    drawPaddle(playerPaddle);
+    drawPaddle(aiPaddle);
+    drawBall();
+
+    movePaddle(playerPaddle);
+    movePaddle(aiPaddle);
+    moveBall(
+      this.#checkCollision(playerPaddle, ball) || this.#checkCollision(aiPaddle, ball)
+    );
+    moveAiPaddleLogic(aiPaddle, ball);
+
+    requestAnimationFrame(this.gameLoop.bind(this)); // 다음 프레임 요청, 재귀함수
+  }
 }
 
-function gameLoop() {
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight); // 캔버스 지우기(계속 그려야 되니까)
-  drawPaddle(playerPaddle);
-  drawPaddle(aiPaddle);
-  drawBall();
-
-  movePaddle(playerPaddle);
-  movePaddle(aiPaddle);
-  moveBall(
-    checkCollision(playerPaddle, ball) || checkCollision(aiPaddle, ball),
-  );
-  moveAiPaddleLogic(aiPaddle, ball);
-
-  requestAnimationFrame(gameLoop); // 다음 프레임 요청, 재귀함수
-}
-
-gameLoop();
+const game = new Game();
+game.addKeyEventListener();
+game.gameLoop();
