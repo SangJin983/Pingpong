@@ -22,7 +22,7 @@ class Ball {
     this.dy = Ball.#BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
   }
 
-  move(isCollision) {
+  move(isCollision, resetCallback) {
     this.x += this.dx;
     this.y += this.dy;
     // 벽과 충돌했을 때의 움직임
@@ -36,6 +36,7 @@ class Ball {
     // 공이 화면에 넘어가면 초기화
     if (this.x + this.radius < 0 || this.x - this.radius > canvasWidth) {
       this.#reset();
+      resetCallback();
     }
   }
 }

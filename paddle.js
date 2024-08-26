@@ -11,11 +11,13 @@ class Paddle {
   moveUp = false;
   moveDown = false;
   name;
+  movingLogic;
 
-  constructor(x, y, name) {
+  constructor(x, y, name, movingLogic) {
     this.x = x;
     this.y = y;
     this.name = name;
+    this.movingLogic = movingLogic;
   }
 
   draw() {
@@ -23,31 +25,7 @@ class Paddle {
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 
-  move() {
-    // Player와 AI 각 클래스로 분리할 예정.
-  }
-}
-
-class PlayerPaddle extends Paddle {
-  move() {
-    if (this.moveUp && this.y > 0) {
-      this.y -= this.dy;
-    }
-    if (this.moveDown && this.y + this.height < canvasHeight) {
-      this.y += this.dy;
-    }
-  }
-}
-
-class AiPaddle extends Paddle {
-  move(ball) {
-    if (ball.y < this.y + this.height / 2 && this.y > 0) {
-      this.y -= this.dy;
-    } else if (
-      ball.y > this.y + this.height / 2 &&
-      this.y + this.height < canvasHeight
-    ) {
-      this.y += this.dy;
-    }
+  move(ball = null) {
+    this.movingLogic.move(this, ball)
   }
 }

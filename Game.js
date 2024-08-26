@@ -22,6 +22,10 @@ class Game {
     return isCollision;
   }
 
+  resetCollisionTarget() {
+    this.#lastCollisionTarget = null;
+  }
+
   #handleKeyPress(event, keyPressed) {
     if (event.key === "ArrowUp") this.playerPaddle.moveUp = keyPressed;
     if (event.key === "ArrowDown") this.playerPaddle.moveDown = keyPressed;
@@ -45,7 +49,9 @@ class Game {
     this.playerPaddle.move();
     this.aiPaddle.move(this.ball);
     this.ball.move(
-      this.#checkCollision(this.playerPaddle) || this.#checkCollision(this.aiPaddle)
+      this.#checkCollision(this.playerPaddle) ||
+        this.#checkCollision(this.aiPaddle),
+      this.resetCollisionTarget.bind(this)
     );
 
     requestAnimationFrame(this.gameLoop.bind(this)); // 다음 프레임 요청, 재귀함수
