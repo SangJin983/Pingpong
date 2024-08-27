@@ -4,3 +4,5 @@ const ctx = $canvas.getContext("2d");
 
 const canvasHeight = $canvas.height;
 const canvasWidth = $canvas.width;
+
+export { ctx, canvasHeight, canvasWidth };

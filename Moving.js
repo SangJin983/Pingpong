@@ -1,29 +1,37 @@
-class Moving {
-  move(paddle, ball) {
+import { canvasHeight } from "./preference.js";
+
+export class Moving {
+  move(movingObject, dest) {
     // 상속 클래스에서 구현
   }
 }
 
-class PlayerMoving extends Moving {
-  move(paddle) {
-    if (paddle.moveUp && paddle.y > 0) {
-      paddle.y -= paddle.dy;
+export class VerticalMoving extends Moving {
+  move(movingObject) {
+    if (movingObject.moveUp && movingObject.y > 0) {
+      movingObject.y -= movingObject.dy;
     }
-    if (paddle.moveDown && paddle.y + paddle.height < canvasHeight) {
-      paddle.y += paddle.dy;
+    if (
+      movingObject.moveDown &&
+      movingObject.y + movingObject.height < canvasHeight
+    ) {
+      movingObject.y += movingObject.dy;
     }
   }
 }
 
-class AiMoving extends Moving {
-  move(paddle, ball) {
-    if (ball.y < paddle.y + paddle.height / 2 && paddle.y > 0) {
-      paddle.y -= paddle.dy;
-    } else if (
-      ball.y > paddle.y + paddle.height / 2 &&
-      paddle.y + paddle.height < canvasHeight
+export class TrackingVerticalMoving extends Moving {
+  move(movingObject, dest) {
+    if (
+      dest.y < movingObject.y + movingObject.height / 2 &&
+      movingObject.y > 0
     ) {
-      paddle.y += paddle.dy;
+      movingObject.y -= movingObject.dy;
+    } else if (
+      dest.y > movingObject.y + movingObject.height / 2 &&
+      movingObject.y + movingObject.height < canvasHeight
+    ) {
+      movingObject.y += movingObject.dy;
     }
   }
 }

@@ -1,4 +1,6 @@
-class Ball {
+import { ctx, canvasHeight, canvasWidth } from "./preference.js";
+
+export class Ball {
   static #BALL_SIZE = 10;
   static #BALL_SPEED = 4;
 
@@ -22,21 +24,25 @@ class Ball {
     this.dy = Ball.#BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
   }
 
-  move(isCollision, resetCallback) {
+  move(isCollision) {
     this.x += this.dx;
     this.y += this.dy;
     // 벽과 충돌했을 때의 움직임
     if (this.y - this.radius < 0 || this.y + this.radius > canvasHeight) {
       this.dy = -this.dy;
+      return "wallCollision"
     }
     // 패들과 충돌 했을 때의 움직임
     if (isCollision) {
       this.dx = -this.dx;
+      return "paddleCollsion"
     }
     // 공이 화면에 넘어가면 초기화
     if (this.x + this.radius < 0 || this.x - this.radius > canvasWidth) {
       this.#reset();
-      resetCallback();
+      return "outOfViewport"
     }
+
+    return "going"
   }
 }

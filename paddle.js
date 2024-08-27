@@ -1,4 +1,6 @@
-class Paddle {
+import { ctx } from "./preference.js";
+
+export class Paddle {
   static PADDLE_WIDTH = 10;
   static PADDLE_HEIGHT = 100;
   static PADDLE_SPEED = 5;
@@ -26,6 +28,6 @@ class Paddle {
   }
 
   move(ball = null) {
-    this.movingLogic.move(this, ball)
+    this.movingLogic.move(this, ball);
   }
 }

@@ -1,4 +1,6 @@
-class Game {
+import { ctx, canvasWidth, canvasHeight } from "./preference.js";
+
+export class Game {
   #lastCollisionTarget = null;
 
   constructor(ball, playerPaddle, aiPaddle) {
@@ -48,11 +50,15 @@ class Game {
 
     this.playerPaddle.move();
     this.aiPaddle.move(this.ball);
-    this.ball.move(
+
+    const movingResult = this.ball.move(
       this.#checkCollision(this.playerPaddle) ||
-        this.#checkCollision(this.aiPaddle),
-      this.resetCollisionTarget.bind(this)
+        this.#checkCollision(this.aiPaddle)
     );
+    
+    if (movingResult === "outOfViewport") {
+      this.resetCollisionTarget()
+    }
 
     requestAnimationFrame(this.gameLoop.bind(this)); // 다음 프레임 요청, 재귀함수
   }
