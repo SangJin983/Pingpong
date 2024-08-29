@@ -1,31 +1,26 @@
 import { ctx, canvasWidth, canvasHeight } from "./preference.js";
 
 export class Game {
-  #lastCollisionTarget = null;
-
-  constructor(ball, playerPaddle, aiPaddle) {
-    this.ball = ball;
+  constructor(balls, playerPaddle, aiPaddle) {
+    this.balls = balls;
     this.playerPaddle = playerPaddle;
     this.aiPaddle = aiPaddle;
+    this.lastCollisionTargets = Array(balls.length).fill(null);
   }
 
-  #checkCollision(paddle) {
+  #checkCollision(ballIndex, ball, paddle) {
     const isCollision =
-      paddle.name !== this.#lastCollisionTarget &&
-      this.ball.x - this.ball.radius < paddle.x + paddle.width &&
-      this.ball.x + this.ball.radius > paddle.x &&
-      this.ball.y + this.ball.radius > paddle.y &&
-      this.ball.y - this.ball.radius < paddle.y + paddle.height;
+      paddle.name !== this.lastCollisionTargets[ballIndex] &&
+      ball.x - ball.radius < paddle.x + paddle.width &&
+      ball.x + ball.radius > paddle.x &&
+      ball.y + ball.radius > paddle.y &&
+      ball.y - ball.radius < paddle.y + paddle.height;
 
     if (isCollision) {
-      this.#lastCollisionTarget = paddle.name;
+      this.lastCollisionTargets[ballIndex] = paddle.name;
     }
 
     return isCollision;
-  }
-
-  resetCollisionTarget() {
-    this.#lastCollisionTarget = null;
   }
 
   #handleKeyPress(event, keyPressed) {
@@ -46,19 +41,21 @@ export class Game {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight); // 캔버스 지우기(계속 그려야 되니까)
     this.playerPaddle.draw();
     this.aiPaddle.draw();
-    this.ball.draw();
+    this.balls.forEach((ball) => ball.draw());
 
     this.playerPaddle.move();
-    this.aiPaddle.move(this.ball);
+    this.aiPaddle.move(this.balls[0]);
 
-    const movingResult = this.ball.move(
-      this.#checkCollision(this.playerPaddle) ||
-        this.#checkCollision(this.aiPaddle)
-    );
-    
-    if (movingResult === "outOfViewport") {
-      this.resetCollisionTarget()
-    }
+    this.balls.forEach((ball, index) => {
+      const movingResult = ball.move(
+        this.#checkCollision(index, ball, this.playerPaddle) ||
+          this.#checkCollision(index, ball, this.aiPaddle)
+      );
+
+      if (movingResult === "outOfViewport") {
+        this.lastCollisionTargets[index] = null;
+      }
+    });
 
     requestAnimationFrame(this.gameLoop.bind(this)); // 다음 프레임 요청, 재귀함수
   }
