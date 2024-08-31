@@ -4,11 +4,17 @@ export class Ball {
   static #BALL_SIZE = 10;
   static #BALL_SPEED = 4;
 
-  x = canvasWidth / 2;
-  y = canvasHeight / 2;
+  x;
+  y;
   radius = Ball.#BALL_SIZE;
-  dx = Ball.#BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
-  dy = Ball.#BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
+  dx;
+  dy;
+  id = null;
+
+  constructor(id) {
+    this.id = id;
+    this.#reset()
+  }
 
   draw() {
     ctx.fillStyle = "#00ff00";
@@ -19,7 +25,7 @@ export class Ball {
 
   #reset() {
     this.x = canvasWidth / 2;
-    this.y = canvasHeight / 2;
+    this.y = canvasHeight / 4 + (Math.random() * canvasHeight) / 2;
     this.dx = Ball.#BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
     this.dy = Ball.#BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
   }

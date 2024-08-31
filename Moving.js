@@ -21,17 +21,36 @@ export class VerticalMoving extends Moving {
 }
 
 export class TrackingVerticalMoving extends Moving {
-  move(movingObject, dest) {
+  move(movingObject, dests) {
+    if (dests.length === 0) return;
+
+    const closestDest = this.findClosestDestination(movingObject, dests);
+
     if (
-      dest.y < movingObject.y + movingObject.height / 2 &&
+      closestDest.y < movingObject.y + movingObject.height / 2 &&
       movingObject.y > 0
     ) {
       movingObject.y -= movingObject.dy;
     } else if (
-      dest.y > movingObject.y + movingObject.height / 2 &&
+      closestDest.y > movingObject.y + movingObject.height / 2 &&
       movingObject.y + movingObject.height < canvasHeight
     ) {
       movingObject.y += movingObject.dy;
     }
+  }
+
+  findClosestDestination(movingObject, dests) {
+    let closestDest = null;
+    let minDistance = Infinity;
+
+    dests.forEach((dest) => {
+      const distance = Math.abs((dest.x - movingObject.x));
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestDest = dest;
+      }
+    });
+
+    return closestDest;
   }
 }

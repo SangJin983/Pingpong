@@ -5,19 +5,24 @@ export class Game {
     this.balls = balls;
     this.playerPaddle = playerPaddle;
     this.aiPaddle = aiPaddle;
-    this.lastCollisionTargets = Array(balls.length).fill(null);
+    this.lastCollisionTargets = balls
+      .map((ball) => ball.id) // [ball.id, ball.id, ...]
+      .reduce((acc, cur) => {
+        acc[cur] = null;
+        return acc;
+      }, {}); // {[ball.id]: null, [ball.id]: null, ...}
   }
 
-  #checkCollision(ballIndex, ball, paddle) {
+  #checkCollision(ball, paddle) {
     const isCollision =
-      paddle.name !== this.lastCollisionTargets[ballIndex] &&
+      paddle.name !== this.lastCollisionTargets[ball.id] &&
       ball.x - ball.radius < paddle.x + paddle.width &&
       ball.x + ball.radius > paddle.x &&
       ball.y + ball.radius > paddle.y &&
       ball.y - ball.radius < paddle.y + paddle.height;
 
     if (isCollision) {
-      this.lastCollisionTargets[ballIndex] = paddle.name;
+      this.lastCollisionTargets[ball.id] = paddle.name;
     }
 
     return isCollision;
@@ -44,12 +49,12 @@ export class Game {
     this.balls.forEach((ball) => ball.draw());
 
     this.playerPaddle.move();
-    this.aiPaddle.move(this.balls[0]);
+    this.aiPaddle.move(this.balls);
 
     this.balls.forEach((ball, index) => {
       const movingResult = ball.move(
-        this.#checkCollision(index, ball, this.playerPaddle) ||
-          this.#checkCollision(index, ball, this.aiPaddle)
+        this.#checkCollision(ball, this.playerPaddle) ||
+          this.#checkCollision(ball, this.aiPaddle)
       );
 
       if (movingResult === "outOfViewport") {

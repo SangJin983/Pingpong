@@ -5,9 +5,7 @@ import { Ball } from "./Ball.js";
 import { Game } from "./Game.js";
 
 const game = new Game(
-  Array(4)
-    .fill(null)
-    .map(() => new Ball()),
+  Array.from({ length: 4 }).map((_, index) => new Ball(index)),
   new Paddle(
     0,
     canvasHeight / 2 - Paddle.PADDLE_HEIGHT / 2,
