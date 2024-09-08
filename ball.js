@@ -13,7 +13,7 @@ export class Ball {
 
   constructor(id) {
     this.id = id;
-    this.#reset()
+    this.#reset();
   }
 
   draw() {
@@ -36,19 +36,20 @@ export class Ball {
     // 벽과 충돌했을 때의 움직임
     if (this.y - this.radius < 0 || this.y + this.radius > canvasHeight) {
       this.dy = -this.dy;
-      return "wallCollision"
+      return { status: "wallCollision" };
     }
     // 패들과 충돌 했을 때의 움직임
     if (isCollision) {
       this.dx = -this.dx;
-      return "paddleCollsion"
+      return { status: "paddleCollision" };
     }
     // 공이 화면에 넘어가면 초기화
     if (this.x + this.radius < 0 || this.x - this.radius > canvasWidth) {
+      const currentBallX = this.x;
       this.#reset();
-      return "outOfViewport"
+      return { status: "outOfViewport", x: currentBallX };;
     }
 
-    return "going"
+    return { status: "going" };
   }
 }

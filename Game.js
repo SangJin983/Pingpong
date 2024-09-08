@@ -1,10 +1,11 @@
 import { ctx, canvasWidth, canvasHeight } from "./preference.js";
 
 export class Game {
-  constructor(balls, playerPaddle, aiPaddle) {
+  constructor(balls, playerPaddle, aiPaddle, score) {
     this.balls = balls;
     this.playerPaddle = playerPaddle;
     this.aiPaddle = aiPaddle;
+    this.score = score;
     this.lastCollisionTargets = balls
       .map((ball) => ball.id) // [ball.id, ball.id, ...]
       .reduce((acc, cur) => {
@@ -42,8 +43,22 @@ export class Game {
     );
   }
 
+  updateScore(ballX) {
+    if (ballX < 0) {
+      this.score.update("ai");
+    } else if (ballX > canvasWidth) {
+      this.score.update("player");
+    }
+  }
+
+  resetCollisionTarget(ball) {
+    this.lastCollisionTargets[ball.id] = null;
+  }
+
   gameLoop() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight); // 캔버스 지우기(계속 그려야 되니까)
+
+    this.score.draw();
     this.playerPaddle.draw();
     this.aiPaddle.draw();
     this.balls.forEach((ball) => ball.draw());
@@ -51,14 +66,15 @@ export class Game {
     this.playerPaddle.move();
     this.aiPaddle.move(this.balls);
 
-    this.balls.forEach((ball, index) => {
+    this.balls.forEach((ball) => {
       const movingResult = ball.move(
         this.#checkCollision(ball, this.playerPaddle) ||
           this.#checkCollision(ball, this.aiPaddle)
       );
 
-      if (movingResult === "outOfViewport") {
-        this.lastCollisionTargets[index] = null;
+      if (movingResult.status === "outOfViewport") {
+        this.updateScore(movingResult.x);
+        this.resetCollisionTarget(ball);
       }
     });
 

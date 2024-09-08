@@ -2,6 +2,7 @@ import { canvasHeight, canvasWidth } from "./preference.js";
 import { Paddle } from "./Paddle.js";
 import { VerticalMoving, TrackingVerticalMoving } from "./Moving.js";
 import { Ball } from "./Ball.js";
+import { Score } from "./Score.js";
 import { Game } from "./Game.js";
 
 const game = new Game(
@@ -17,7 +18,8 @@ const game = new Game(
     canvasHeight / 2 - Paddle.PADDLE_HEIGHT / 2,
     "ai",
     new TrackingVerticalMoving()
-  )
+  ),
+  new Score()
 );
 game.addKeyEventListener();
 game.gameLoop();
