@@ -45,9 +45,9 @@ export class Game {
 
   updateScore(ballX) {
     if (ballX < 0) {
-      this.score.update("ai");
+      this.score.update(this.aiPaddle.name);
     } else if (ballX > canvasWidth) {
-      this.score.update("player");
+      this.score.update(this.playerPaddle.name);
     }
   }
 

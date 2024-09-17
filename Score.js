@@ -1,23 +1,24 @@
 import { ctx, canvasWidth } from "./preference.js";
 
 export class Score {
-  constructor() {
-    this.playerScore = 0;
-    this.aiScore = 0;
+  constructor(...players) {
+    this.scores = {};
+    players.forEach((player) => {
+      this.scores[player] = 0;
+    });
   }
 
-  update(winner) {
-    if (winner === "player") {
-      this.playerScore += 1;
-    } else if (winner === "ai") {
-      this.aiScore += 1;
+  update(playerName) {
+    if (this.scores[playerName] !== undefined) {
+      this.scores[playerName] += 1;
     }
   }
 
   draw() {
     ctx.font = "20px Arial";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText(`Player: ${this.playerScore}`, 50, 30);
-    ctx.fillText(`AI: ${this.aiScore}`, canvasWidth - 100, 30);
+    Object.keys(this.scores).forEach((player, index) => {
+      ctx.fillText(`${player}: ${this.scores[player]}`, 50 + index * 650, 30);
+    });
   }
 }

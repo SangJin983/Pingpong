@@ -19,7 +19,7 @@ const game = new Game(
     "ai",
     new TrackingVerticalMoving()
   ),
-  new Score()
+  new Score("player", "ai")
 );
 game.addKeyEventListener();
 game.gameLoop();
